@@ -10,7 +10,16 @@ ChessDict_Init = {16:'K', 17:'A', 18:'A', 19:'B', 20:'B', 21:'N', 22:'N',
     32:'k', 33:'a', 34:'a', 35:'b', 36:'b', 37:'n', 38:'n', 
     39:'r', 40:'r', 41:'c', 42:'c', 43:'p', 44:'p', 45:'p', 46:'p', 47:'p'}
 
-LegalPosition_Init = [[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+DictChess_Init = {}
+DictChess_value = {}
+
+for key,value in ChessDict_Init.items():
+    if value not in DictChess_Init:
+        DictChess_Init.update({value:key})
+        DictChess_value.update({value:True})
+
+
+LegalPosition_Init =[[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
     [0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0],
@@ -50,7 +59,10 @@ class ChessBoard:
         self.Board = Board_Init
         self.LegalPosition = LegalPosition_Init
         self.ChessDict = ChessDict_Init
+        self.DictChess = DictChess_Init
+        self.DictChess_value = DictChess_value
         self.side = 0
+
     def ArrToFen(self):
         FenStr = ''
         for i in range(3,13):
@@ -80,9 +92,10 @@ class ChessBoard:
     def FenToArr(self, FenStr):
         i = 3
         j = 3
+        flag = 0
         for index in range(len(FenStr)):
             char = FenStr[index]
-            print(char)
+            # print(char)
             if char == '/':
                 i = i + 1
                 j = 3
@@ -91,7 +104,17 @@ class ChessBoard:
                 cnt = int(char)
                 j = j + cnt
             except:
-                self.Board[i][j] = char
+                # if  self.DictChess_value[self.DictChess[char]]:
+                #     self.Board[i][j] = self.DictChess[char]
+                #     self.DictChess_value[self.DictChess[char]] = False
+                # else
+                if self.DictChess_value[char]:
+                    self.Board[i][j] = self.DictChess[char]
+                    self.DictChess_value[char] = False
+                else:
+                    self.Board[i][j] = self.DictChess[char]+1
+                    self.DictChess_value[char] = True
+
                 j = j + 1
             if char == 'w':
                 self.side = 0
